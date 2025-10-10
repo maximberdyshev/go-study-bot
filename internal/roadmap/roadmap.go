@@ -1,5 +1,7 @@
 package roadmap
 
+var TotalDays int = len(All())
+
 type Day struct {
 	Number      int
 	Week        int

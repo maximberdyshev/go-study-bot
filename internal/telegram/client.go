@@ -2,19 +2,23 @@ package telegram
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
 	"strconv"
+	"time"
 )
 
 const (
 	tgEndpointAPI = "https://api.telegram.org/bot"
+	httpTimeout   = 10 * time.Second
 )
 
 type Client struct {
 	token string
+	http  *http.Client
 }
 
 type Update struct {
@@ -28,13 +32,13 @@ type Update struct {
 }
 
 type User struct {
-	ID        int    `json:"id"`
+	ID        int64  `json:"id"`
 	Username  string `json:"username"`
 	FirstName string `json:"first_name"`
 }
 
 type Chat struct {
-	ID int64 `json:"ID"`
+	ID int64 `json:"id"`
 }
 
 type sendMessageRequest struct {
@@ -43,14 +47,23 @@ type sendMessageRequest struct {
 }
 
 func NewClient(token string) *Client {
-	return &Client{token: token}
+	return &Client{
+		token: token,
+		http: &http.Client{
+			Timeout: httpTimeout,
+		},
+	}
 }
 
-func (c *Client) GetUpdates(offset int) ([]Update, error) {
+func (c *Client) GetUpdates(ctx context.Context, offset int) ([]Update, error) {
 	url := fmt.Sprintf("%s%s/getUpdates", tgEndpointAPI, c.token)
 
 	reqURL := url + "?offset=" + strconv.Itoa(offset)
-	resp, err := http.Get(reqURL)
+	req, err := http.NewRequestWithContext(ctx, "GET", reqURL, nil)
+	if err != nil {
+		return nil, fmt.Errorf("create request: %w", err)
+	}
+	resp, err := c.http.Do(req)
 	if err != nil {
 		return nil, fmt.Errorf("http get: %w", err)
 	}
@@ -60,7 +73,6 @@ func (c *Client) GetUpdates(offset int) ([]Update, error) {
 	if err != nil {
 		return nil, fmt.Errorf("read reasponse body: %w", err)
 	}
-
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf("telegram API returned status: %d, desc: %s", resp.StatusCode, string(body))
 	}
@@ -69,36 +81,38 @@ func (c *Client) GetUpdates(offset int) ([]Update, error) {
 		OK     bool     `json:"ok"`
 		Result []Update `json:"result"`
 	}
-
 	if err := json.Unmarshal(body, &result); err != nil {
 		return nil, fmt.Errorf("unmarshal response :%w", err)
 	}
-
 	return result.Result, nil
 }
 
-func (c *Client) SendMessage(chatID, text string) error {
+func (c *Client) SendMessage(ctx context.Context, chatID, text string) error {
 	url := fmt.Sprintf("%s%s/sendMessage", tgEndpointAPI, c.token)
 
 	payload := sendMessageRequest{
 		ChatID: chatID,
 		Text:   text,
 	}
-
 	body, err := json.Marshal(payload)
 	if err != nil {
 		return fmt.Errorf("marshal payload: %w", err)
 	}
 
-	resp, err := http.Post(url, "application/json", bytes.NewBuffer(body))
+	req, err := http.NewRequestWithContext(ctx, "GET", url, bytes.NewBuffer(body))
 	if err != nil {
-		return fmt.Errorf("http post: %w", err)
+		return fmt.Errorf("create request: %w", err)
+	}
+	req.Header.Set("Content-Type", "application/json")
+	resp, err := c.http.Do(req)
+	if err != nil {
+		return fmt.Errorf("http do: %w", err)
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return fmt.Errorf("telegram API returned status: %d", resp.StatusCode)
+		body, _ := io.ReadAll(resp.Body)
+		return fmt.Errorf("telegram API error: %d %s", resp.StatusCode, string(body))
 	}
-
 	return nil
 }

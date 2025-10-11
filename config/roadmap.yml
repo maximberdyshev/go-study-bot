@@ -1,0 +1,175 @@
+total_days: 42
+days:
+  - number: 1
+    week: 1
+    title: "Установка Go и Hello World"
+    description: "Установи Go, настрой go.mod, напиши 'Hello world!'"
+  - number: 2
+    week: 1
+    title: "Переменные, типы, функции"
+    description: "Изучи базовые типы. Напиши программу для расчёта площади фигур."
+  - number: 3
+    week: 1
+    title: "Управляющие конструкции"
+    description: "Реализуй калькулятор с проверкой деления на 0."
+  - number: 4
+    week: 1
+    title: "Функции и множественный возврат"
+    description: "Напиши функции min/max и деления с остатком."
+  - number: 5
+    week: 1
+    title: "Структуры и указатели"
+    description: "Создай структуру Person и функцию изменения возраста через указатель."
+  - number: 6
+    week: 1
+    title: "Мини-проект: Бюджет"
+    description: "CLI-программа для учёта расходов (слайсы + структуры)."
+  - number: 7
+    week: 1
+    title: "Отдых и чтение"
+    description: "Прочитай 'A Tour of Go: Basics'."
+
+  - number: 8
+    week: 2
+    title: "Слайсы и мапы"
+    description: "Реализуй фильтрацию чисел и поиск столиц по странам."
+  - number: 9
+    week: 2
+    title: "Работа с JSON"
+    description: "Сериализуй/десериализуй структуру User в файл."
+  - number: 10
+    week: 2
+    title: "Обработка ошибок"
+    description: "Напиши функцию деления с возвратом ошибки."
+  - number: 11
+    week: 2
+    title: "Тестирование (testing)"
+    description: "Напиши unit-тесты для своих функций."
+  - number: 12
+    week: 2
+    title: "defer, panic, recover"
+    description: "Используй defer для закрытия файла, recover — для обработки паники."
+  - number: 13
+    week: 2
+    title: "Мини-проект: CLI-утилита"
+    description: "Программа чтения JSON-файла с пользователями."
+  - number: 14
+    week: 2
+    title: "Отдых и чтение"
+    description: "Прочитай 'Effective Go: Errors'."
+
+  - number: 15
+    week: 3
+    title: "Goroutines"
+    description: "Запусти 3 параллельные функции."
+  - number: 16
+    week: 3
+    title: "Каналы (channels)"
+    description: "Реализуй обмен данными между горутинами."
+  - number: 17
+    week: 3
+    title: "sync.WaitGroup и Mutex"
+    description: "Защити счётчик от гонки."
+  - number: 18
+    week: 3
+    title: "HTTP-сервер"
+    description: "Создай сервер с роутом /hello → JSON."
+  - number: 19
+    week: 3
+    title: "HTTP-клиент и context"
+    description: "Сделай GET-запрос с таймаутом."
+  - number: 20
+    week: 3
+    title: "Мини-проект: Счётчик запросов"
+    description: "HTTP-сервер с мьютексом и счётчиком."
+  - number: 21
+    week: 3
+    title: "Отдых и чтение"
+    description: "Посмотри 'Go Concurrency Patterns' by Rob Pike."
+
+  - number: 22
+    week: 4
+    title: "Интерфейсы"
+    description: "Создай интерфейс Notifier с Email/Sms реализациями."
+  - number: 23
+    week: 4
+    title: "Встраивание (embedding)"
+    description: "Реализуй AdminUser через встраивание User."
+  - number: 24
+    week: 4
+    title: "Dependency Injection"
+    description: "Переделай HTTP-сервер с DI."
+  - number: 25
+    week: 4
+    title: "Линтеры и форматирование"
+    description: "Настрой golangci-lint."
+  - number: 26
+    week: 4
+    title: "Generics"
+    description: "Напиши функцию Max[T] и стек Stack[T]."
+  - number: 27
+    week: 4
+    title: "Мини-проект: Кэш"
+    description: "Реализуй интерфейс Cache с in-memory и mock."
+  - number: 28
+    week: 4
+    title: "Отдых и чтение"
+    description: "Прочитай Go Proverbs."
+
+  - number: 29
+    week: 5
+    title: "database/sql + SQLite"
+    description: "Создай таблицу users, вставь/выбери данные."
+  - number: 30
+    week: 5
+    title: "ORM (GORM)"
+    description: "Перепиши работу с БД через GORM."
+  - number: 31
+    week: 5
+    title: "Веб-фреймворк (Gin)"
+    description: "Создай REST API: GET/POST /users."
+  - number: 32
+    week: 5
+    title: "Валидация и middleware"
+    description: "Добавь валидацию email и логирующий middleware."
+  - number: 33
+    week: 5
+    title: "Тестирование HTTP"
+    description: "Напиши тесты через httptest."
+  - number: 34
+    week: 5
+    title: "Мини-проект: REST API заметок"
+    description: "CRUD для заметок с сохранением в SQLite."
+  - number: 35
+    week: 5
+    title: "Отдых и чтение"
+    description: "Изучи Gin examples на GitHub."
+
+  - number: 36
+    week: 6
+    title: "Docker для Go"
+    description: "Напиши Dockerfile для API."
+  - number: 37
+    week: 6
+    title: ".env и конфигурация"
+    description: "Используй godotenv для переменных."
+  - number: 38
+    week: 6
+    title: "Миграции БД"
+    description: "Добавь миграцию через golang-migrate."
+  - number: 39
+    week: 6
+    title: "Swagger"
+    description: "Добавь документацию API через swaggo."
+  - number: 40
+    week: 6
+    title: "Финальная сборка"
+    description: "Проверь работоспособность всего."
+  - number: 41
+    week: 6
+    title: "Финальный проект"
+    description: "Задеплой через Docker Compose."
+  - number: 42
+    week: 6
+    title: "Рефлексия"
+    description: "Напиши итоги и планы на будущее."

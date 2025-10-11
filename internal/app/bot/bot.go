@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/maximberdyshev/go-study-bot/internal/repository"
+	"github.com/maximberdyshev/go-study-bot/internal/roadmap"
 	"github.com/maximberdyshev/go-study-bot/internal/telegram"
 )
 
@@ -18,6 +19,7 @@ type Bot struct {
 	userRepo      *repository.UserRepository
 	progressRepo  *repository.ProgressRepository
 	whitelistRepo *repository.WhitelistRepository
+	roadmap       *roadmap.Roadmap
 }
 
 func New(
@@ -25,12 +27,14 @@ func New(
 	userRepo *repository.UserRepository,
 	progressRepo *repository.ProgressRepository,
 	whitelistRepo *repository.WhitelistRepository,
+	roadmap *roadmap.Roadmap,
 ) *Bot {
 	return &Bot{
 		client:        client,
 		userRepo:      userRepo,
 		progressRepo:  progressRepo,
 		whitelistRepo: whitelistRepo,
+		roadmap:       roadmap,
 	}
 }
 

@@ -7,8 +7,6 @@ import (
 	"log"
 	"strconv"
 	"strings"
-
-	"github.com/maximberdyshev/go-study-bot/internal/roadmap"
 )
 
 func (b *Bot) handleCommand(ctx context.Context, text string, telegramUserID int64) string {
@@ -29,11 +27,11 @@ func (b *Bot) handleCommand(ctx context.Context, text string, telegramUserID int
 
 	case len(text) > 4 && strings.HasPrefix(text, "/day"):
 		dayStr := strings.TrimSpace(text[4:])
-		dayNum, err := parseDayNumber(dayStr)
+		dayNum, err := b.parseDayNumber(dayStr)
 		if err != nil {
 			return err.Error()
 		}
-		day := roadmap.GetByNumber(dayNum)
+		day := b.roadmap.GetByNumber(dayNum)
 		if day == nil {
 			log.Printf("⚠️  Failed get day %d in roadmap", dayNum)
 			return "❌ Не удалось найти запись по roadmap. Попробуй позже."
@@ -43,7 +41,7 @@ func (b *Bot) handleCommand(ctx context.Context, text string, telegramUserID int
 
 	case len(text) > 5 && strings.HasPrefix(text, "/done"):
 		dayStr := strings.TrimSpace(text[5:])
-		dayNum, err := parseDayNumber(dayStr)
+		dayNum, err := b.parseDayNumber(dayStr)
 		if err != nil {
 			return err.Error()
 		}
@@ -52,7 +50,7 @@ func (b *Bot) handleCommand(ctx context.Context, text string, telegramUserID int
 			log.Printf("⚠️  Failed get user by telegram_id %d: %v", telegramUserID, err)
 			return "❌ О тебе нет информации. Пройди регистрацию командой /start."
 		}
-		if err := b.progressRepo.MarkDayCompleted(ctx, user.ID, dayNum); err != nil {
+		if err := b.progressRepo.MarkDayCompleted(ctx, user.ID, dayNum, b.roadmap.TotalDays); err != nil {
 			log.Printf("⚠️  Failed mark day %d internal user_id %d: %v", dayNum, user.ID, err)
 			return "❌ Не удалось сохранить прогресс. Попробуй позже."
 		}
@@ -64,7 +62,7 @@ func (b *Bot) handleCommand(ctx context.Context, text string, telegramUserID int
 			log.Printf("⚠️  Failed get user by telegram_id %d: %v", telegramUserID, err)
 			return "❌ О тебе нет информации. Пройди регистрацию командой /start."
 		}
-		completed, total, err := b.progressRepo.GetCompletionStats(ctx, user.ID)
+		completed, total, err := b.progressRepo.GetCompletionStats(ctx, user.ID, b.roadmap.TotalDays)
 		if err != nil {
 			log.Printf("⚠️  Failed get progress internal user_id %d: %v", user.ID, err)
 			return "❌ Не удалось получить данные о прогрессе. Попробуй позже."
@@ -79,7 +77,7 @@ func (b *Bot) handleCommand(ctx context.Context, text string, telegramUserID int
 	}
 }
 
-func parseDayNumber(s string) (int, error) {
+func (b *Bot) parseDayNumber(s string) (int, error) {
 	if s == "" {
 		return 0, errors.New("⚠️ Укажи номер дня, например: /done5, /day7")
 	}
@@ -87,8 +85,8 @@ func parseDayNumber(s string) (int, error) {
 	if err != nil {
 		return 0, errors.New("⚠️ Номер дня должен быть целым числом")
 	}
-	if n < 1 || n > roadmap.TotalDays {
-		return 0, fmt.Errorf("⚠️ Номер дня должен быть от 1 до %d", roadmap.TotalDays)
+	if n < 1 || n > b.roadmap.TotalDays {
+		return 0, fmt.Errorf("⚠️ Номер дня должен быть от 1 до %d", b.roadmap.TotalDays)
 	}
 	return n, nil
 }

@@ -4,8 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-
-	"github.com/maximberdyshev/go-study-bot/internal/roadmap"
 )
 
 type ProgressRepository struct {
@@ -16,15 +14,15 @@ func NewProgressRepository(db *sql.DB) *ProgressRepository {
 	return &ProgressRepository{db: db}
 }
 
-func (r *ProgressRepository) MarkDayCompleted(ctx context.Context, internalUserID int64, dayNumber int) error {
+func (r *ProgressRepository) MarkDayCompleted(ctx context.Context, internalUserID int64, dayNumber, maxDays int) error {
 	query := `
 		INSERT INTO completed_days (user_id, day_number)
 		VALUES ($1, $2)
 		ON CONFLICT (user_id, day_number) DO NOTHING;
 	`
 
-	if dayNumber < 1 || dayNumber > roadmap.TotalDays {
-		return fmt.Errorf("day number must be between 1 and %d", roadmap.TotalDays)
+	if dayNumber < 1 || dayNumber > maxDays {
+		return fmt.Errorf("day number must be between 1 and %d", maxDays)
 	}
 
 	_, err := r.db.ExecContext(ctx, query, internalUserID, dayNumber)
@@ -58,7 +56,7 @@ func (r *ProgressRepository) MarkDayCompleted(ctx context.Context, internalUserI
 // 	return days, nil
 // }
 
-func (r *ProgressRepository) GetCompletionStats(ctx context.Context, internalUserID int64) (int, int, error) {
+func (r *ProgressRepository) GetCompletionStats(ctx context.Context, internalUserID int64, maxDays int) (int, int, error) {
 	query := `
 		SELECT COUNT(*)
 		FROM completed_days
@@ -67,5 +65,5 @@ func (r *ProgressRepository) GetCompletionStats(ctx context.Context, internalUse
 
 	var completed int
 	err := r.db.QueryRowContext(ctx, query, internalUserID).Scan(&completed)
-	return completed, roadmap.TotalDays, err
+	return completed, maxDays, err
 }

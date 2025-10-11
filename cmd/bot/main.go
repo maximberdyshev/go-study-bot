@@ -11,6 +11,7 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/maximberdyshev/go-study-bot/internal/app/bot"
 	"github.com/maximberdyshev/go-study-bot/internal/repository"
+	"github.com/maximberdyshev/go-study-bot/internal/roadmap"
 	"github.com/maximberdyshev/go-study-bot/internal/telegram"
 )
 
@@ -40,11 +41,17 @@ func main() {
 	}
 	log.Println("✅  Schema initialized")
 
+	roadmap, err := roadmap.LoadFromFile("config/roadmap.yml")
+	if err != nil {
+		log.Fatalf("❌  Failed load roadmap: %v", err)
+	}
+
 	botApp := bot.New(
 		telegram.NewClient(token),
 		repository.NewUserRepository(db),
 		repository.NewProgressRepository(db),
 		repository.NewWhitelistRepository(db),
+		roadmap,
 	)
 
 	sigCh := make(chan os.Signal, 1)

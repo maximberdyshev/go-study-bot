@@ -36,11 +36,6 @@ func main() {
 	defer db.Close()
 	log.Println("✅  Connected to DB")
 
-	if err := repository.InitSchema(ctx, db); err != nil {
-		log.Fatalf("❌  Failed initialization DB schema: %v", err)
-	}
-	log.Println("✅  Schema initialized")
-
 	roadmap, err := roadmap.LoadFromFile("config/roadmap.yml")
 	if err != nil {
 		log.Fatalf("❌  Failed load roadmap: %v", err)
